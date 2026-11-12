@@ -18,7 +18,8 @@
   /* Constants                                                           */
   /* ------------------------------------------------------------------ */
   var W = 393; // iPhone 15 Pro screen width in points
-  var FONT_STACK = '"SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", system-ui, Roboto, Arial, sans-serif';
+  var FONT_OPTIONS = { iphone: '"SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", system-ui, Roboto, Arial, sans-serif', roboto: '"Roboto", system-ui, Arial, sans-serif', segoe: '"Segoe UI", Tahoma, Arial, sans-serif', inter: '"Inter", Arial, sans-serif' };
+  var activeFontStack = FONT_OPTIONS.iphone, activePostWeight = 400;
   var EMOJI_FONT = '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
   var EMOJI_CDN = "https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/72x72/";
   var HAIR = 0.67; // thin line weight, about 2 real pixels at 3x
@@ -100,7 +101,7 @@
     this.ctx = ctx; this.T = theme; this.assets = assets || {}; this.draw = draw;
   }
   var P = Painter.prototype;
-  P.font = function (size, weight) { this.ctx.font = (weight || 400) + " " + size + "px " + FONT_STACK; };
+  P.font = function (size, weight) { this.ctx.font = (weight || 400) + " " + size + "px " + activeFontStack; };
   P.measure = function (s, size, weight) { this.font(size, weight); return this.ctx.measureText(s).width; };
   P.emojiAdv = function (size) { return size * 1.3; };
 
@@ -157,7 +158,7 @@
   P.wrap = function (text, size, maxW) {
     var self = this, lines = [];
     var paras = String(text || "").replace(/\r/g, "").replace(/\n{3,}/g, "\n\n").split("\n");
-    var spaceW = this.measure(" ", size, 400);
+    var spaceW = this.measure(" ", size, activePostWeight);
     paras.forEach(function (para) {
       if (para.trim() === "") { lines.push({ items: [], w: 0 }); return; }
       var words = [], cur = null;
@@ -165,14 +166,14 @@
       toSpans(para).forEach(function (sp) {
         if (sp.display != null) {
           cur = cur || { items: [], w: 0 };
-          self.pieces(sp.display, size, 400, true).forEach(function (p) { cur.items.push(p); cur.w += p.w; });
+          self.pieces(sp.display, size, activePostWeight, true).forEach(function (p) { cur.items.push(p); cur.w += p.w; });
           return;
         }
         sp.t.split(/(\s+)/).forEach(function (part) {
           if (part === "") return;
           if (/^\s+$/.test(part)) { pushCur(); words.push({ space: true }); return; }
           cur = cur || { items: [], w: 0 };
-          self.pieces(part, size, 400, false).forEach(function (p) { cur.items.push(p); cur.w += p.w; });
+          self.pieces(part, size, activePostWeight, false).forEach(function (p) { cur.items.push(p); cur.w += p.w; });
         });
       });
       pushCur();
@@ -205,7 +206,7 @@
     if (!this.draw) return;
     for (var i = 0; i < lines.length; i++) {
       var base = y + i * lh + lh / 2 + size * 0.35;
-      this.drawPieces(lines[i].items, x, base, size, 400, color, linkColor);
+      this.drawPieces(lines[i].items, x, base, size, activePostWeight, color, linkColor);
     }
   };
 
@@ -596,6 +597,7 @@
   }
   function paintBackdrop(ctx, T, f, cw, ch) {
     var b = f.backdrop || { type: "match" };
+    if (b.type === "transparent") { ctx.clearRect(0, 0, cw, ch); return; }
     if (b.type === "gradient") {
       var a = ((b.angle == null ? 135 : b.angle) - 90) * Math.PI / 180, cx = cw / 2, cy = ch / 2, r = Math.abs(cw * Math.cos(a)) / 2 + Math.abs(ch * Math.sin(a)) / 2;
       var g = ctx.createLinearGradient(cx - Math.cos(a) * r, cy - Math.sin(a) * r, cx + Math.cos(a) * r, cy + Math.sin(a) * r);
@@ -610,6 +612,8 @@
   }
   function render(canvas, model, opts, assets, scale) {
     scale = scale || 2;
+    activeFontStack = FONT_OPTIONS[opts.fontFamily] || FONT_OPTIONS.iphone;
+    activePostWeight = [400, 500, 700].indexOf(+opts.postWeight) >= 0 ? +opts.postWeight : 400;
     var inner = measureModel(canvas, model, opts, assets);
     var f = opts.frame || {}, g = frameGeometry(inner, f);
     canvas.width = Math.round(g.cw * scale); canvas.height = Math.round(g.ch * scale);
@@ -618,13 +622,13 @@
     ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
     var T = THEMES[opts.theme] || THEMES.light;
     paintBackdrop(ctx, T, f, g.cw, g.ch);
-    var styled = g.framed && f.backdrop && f.backdrop.type !== "match" && f.backdrop.type != null;
+    var styled = g.framed && f.backdrop && (f.backdrop.type === "solid" || f.backdrop.type === "gradient");
     if (styled) {
       ctx.save();
       ctx.shadowColor = "rgba(0,0,0,.38)"; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14;
-      ctx.fillStyle = T.bg; rr(ctx, g.x, g.y, inner.w, inner.h, 22); ctx.fill();
+      ctx.fillStyle = T.bg; rr(ctx, g.x, g.y, inner.w, inner.h, f.radius === "rounded" ? 22 : 0); ctx.fill();
       ctx.restore();
-      ctx.save(); rr(ctx, g.x, g.y, inner.w, inner.h, 22); ctx.clip();
+      ctx.save(); rr(ctx, g.x, g.y, inner.w, inner.h, f.radius === "rounded" ? 22 : 0); ctx.clip();
       paintPost(ctx, model, opts, assets, true, g.x, g.y);
       ctx.restore();
     } else {
@@ -663,5 +667,5 @@
     })).then(function () { return assets; });
   }
 
-  return { render: render, prepare: prepare, THEMES: THEMES, FONT_STACK: FONT_STACK, usedLayout: usedLayout, W: W, _fmtCount: fmtCount, _isEmoji: isEmoji, _emojiUrl: emojiUrl };
+  return { render: render, prepare: prepare, THEMES: THEMES, FONT_STACK: FONT_OPTIONS.iphone, FONT_OPTIONS: FONT_OPTIONS, usedLayout: usedLayout, W: W, _fmtCount: fmtCount, _isEmoji: isEmoji, _emojiUrl: emojiUrl };
 });
