@@ -184,7 +184,7 @@
         if (wd.w > maxW) { // a single word wider than the line: break it
           if (line.items.length) newLine();
           wd.items.forEach(function (it) {
-            var parts = it.emoji ? [it] : graphemes(it.s).map(function (g) { return { s: g, w: self.measure(g, size, 400), link: it.link }; });
+            var parts = it.emoji ? [it] : graphemes(it.s).map(function (g) { return { s: g, w: self.measure(g, size, activePostWeight), link: it.link }; });
             parts.forEach(function (p) {
               if (line.w + p.w > maxW && line.items.length) newLine();
               line.items.push(p); line.w += p.w;
@@ -625,7 +625,7 @@
     var styled = g.framed && f.backdrop && (f.backdrop.type === "solid" || f.backdrop.type === "gradient");
     if (styled) {
       ctx.save();
-      ctx.shadowColor = "rgba(0,0,0,.38)"; ctx.shadowBlur = 40; ctx.shadowOffsetY = 14;
+      if (f.radius === "rounded") { ctx.shadowColor = "rgba(0,0,0,.28)"; ctx.shadowBlur = 28; ctx.shadowOffsetY = 10; }
       ctx.fillStyle = T.bg; rr(ctx, g.x, g.y, inner.w, inner.h, f.radius === "rounded" ? 22 : 0); ctx.fill();
       ctx.restore();
       ctx.save(); rr(ctx, g.x, g.y, inner.w, inner.h, f.radius === "rounded" ? 22 : 0); ctx.clip();
