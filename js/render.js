@@ -38,6 +38,7 @@
     views: "M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z",
     bookmark: "M4 4.5C4 3.12 5.119 2 6.5 2h11C18.881 2 20 3.12 20 4.5v18.44l-8-5.71-8 5.71V4.5zM6.5 4c-.276 0-.5.22-.5.5v14.56l6-4.29 6 4.29V4.5c0-.28-.224-.5-.5-.5h-11z",
     share: "M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z",
+    logo: "M18.9 2H22l-6.8 7.8L23 22h-6.2l-4.9-6.4L6.3 22H3.1l7.3-8.4L2.7 2h6.4l4.4 5.9L18.9 2zm-1.1 18h1.7L8 3.9H6.2L17.8 20z",
     more: "M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z",
     badge: "M22.25 12c0-1.43-.88-2.67-2.19-3.34.46-1.39.2-2.9-.81-3.91s-2.52-1.27-3.91-.81c-.66-1.31-1.91-2.19-3.34-2.19s-2.67.88-3.33 2.19c-1.4-.46-2.91-.2-3.92.81s-1.26 2.52-.8 3.91c-1.31.67-2.2 1.91-2.2 3.34s.89 2.67 2.2 3.34c-.46 1.39-.21 2.9.8 3.91s2.52 1.26 3.91.81c.67 1.31 1.91 2.19 3.34 2.19s2.68-.88 3.34-2.19c1.39.45 2.9.2 3.91-.81s1.27-2.52.81-3.91c1.31-.67 2.19-1.91 2.19-3.34zm-11.71 4.2L6.8 12.46l1.41-1.42 2.26 2.26 4.8-5.23 1.47 1.36-6.2 6.77z"
   };
@@ -452,12 +453,12 @@
       this.drawPieces(nm.items, tx, y + 10 + 5.25, 15, 700, T.text, T.blue);
       if (p.author.verified) this.badge(p.author.verified, tx + nm.w + 3, y + 10, 17);
       this.drawPieces(hd.items, tx, y + 30 + 5.25, 15, 400, T.sub, T.blue);
-      this.icon("more", W - px - 22, y + d / 2 - 11, 22, T.sub);
+      this.icon("logo", W - px - 22, y + d / 2 - 11, 22, T.text);
     }
     y += d + 12;
     if (p.replyingTo) { this.replyingTo(p.replyingTo, px, y); y += 28; }
-    var lines = this.wrap(p.text, 17, cw), lh = 24;
-    if (lines.length && (p.text || "").trim()) { this.drawLines(lines, px, y, lh, 17, T.text, T.blue); y += lines.length * lh; y += 10; }
+    var lines = this.wrap(p.text, 16, cw), lh = 22;
+    if (lines.length && (p.text || "").trim()) { this.drawLines(lines, px, y, lh, 16, T.text, T.blue); y += lines.length * lh; y += 10; }
     if (p.media && p.media.length) { y += this.media(p.media, px, y, cw, 16, true) + 12; }
     if (p.quote) { y += this.quote(p.quote, px, y, cw, o) + 12; }
     // time and views
@@ -541,7 +542,7 @@
       x += 4;
       this.drawPieces(hd.items, x, base, 15, 400, T.sub, T.blue); x += hd.w;
       if (timeStr) { this.font(15, 400); ctx.fillStyle = T.sub; ctx.fillText(timeStr, x, base); }
-      this.icon("more", W - px - 18, y + 10 - 9, 18, T.sub);
+      this.icon("logo", W - px - 18, y + 10 - 9, 18, T.text);
     }
     y += 20;
     if (p.replyingTo) { y += 2; if (this.draw) { this.font(15, 400); ctx.fillStyle = T.sub; var lab = "Replying to "; ctx.fillText(lab, x0, y + 10 + 5.25); ctx.fillStyle = T.blue; ctx.fillText("@" + p.replyingTo, x0 + ctx.measureText(lab).width, y + 10 + 5.25); } y += 22; }
