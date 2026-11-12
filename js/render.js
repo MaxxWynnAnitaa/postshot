@@ -18,7 +18,7 @@
   /* Constants                                                           */
   /* ------------------------------------------------------------------ */
   var W = 393; // iPhone 15 Pro screen width in points
-  var FONT_STACK = '"Inter", -apple-system, "SF Pro Text", "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, sans-serif';
+  var FONT_STACK = '"SF Pro Text", "SF Pro Display", -apple-system, BlinkMacSystemFont, "Helvetica Neue", system-ui, Roboto, Arial, sans-serif';
   var EMOJI_FONT = '"Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif';
   var EMOJI_CDN = "https://cdn.jsdelivr.net/gh/jdecked/twemoji@15.1.0/assets/72x72/";
   var HAIR = 0.67; // thin line weight, about 2 real pixels at 3x
@@ -483,7 +483,6 @@
     if (o.showMetrics !== false) {
       var stats = [["reposts", "Repost", "Reposts"], ["quotes", "Quote", "Quotes"], ["likes", "Like", "Likes"], ["bookmarks", "Bookmark", "Bookmarks"]].filter(function (s) { return m[s[0]] > 0; });
       if (stats.length) {
-        this.hline(px, W - px, y, T.divider);
         if (this.draw) {
           var bx = px, bb = y + 24 + 5.25;
           for (var i = 0; i < stats.length; i++) {
@@ -496,12 +495,10 @@
       }
     }
     if (o.showActions !== false) {
-      this.hline(px, W - px, y, T.divider);
       var names = ["reply", "repost", "like", "bookmark", "share"], gap = (cw - 22) / 4;
       for (var k = 0; k < 5; k++) this.icon(names[k], px + k * gap, y + 23 - 11, 22, T.sub);
       y += 46;
     }
-    this.hline(0, W, y, T.divider);
     return y - y0 + 1;
   };
 
