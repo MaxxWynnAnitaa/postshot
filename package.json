@@ -1,0 +1,7 @@
+{
+  "name": "postshot",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Authentic screenshots of public X posts.",
+  "engines": { "node": ">=18" }
+}
