@@ -131,7 +131,7 @@
   }
 
   function syncControls() {
-    pickTheme(S.theme); pickFont(S.fontFamily); pickWeight(S.postWeight); pickFrameStyle(S.frameStyle); pickPreset(S.framePreset); pickLayout(S.layout); pickRatio(S.ratio); pickPad(S.pad); pickFont(S.fontFamily); pickWeight(S.postWeight); pickFrameStyle(S.frameStyle); pickPreset(S.framePreset); pickFormat(S.format); pickScale(S.scale);
+    pickTheme(S.theme); pickFont(S.fontFamily); pickWeight(S.postWeight); pickFrameStyle(S.frameStyle); pickPreset(S.framePreset); pickLayout(S.layout); pickRatio(S.ratio); pickPad(S.pad); pickFormat(S.format); pickScale(S.scale);
     $("#opt-metrics").checked = S.metrics; $("#opt-views").checked = S.views; $("#opt-date").checked = S.showDate; $("#opt-time").checked = S.showTime; $("#opt-actions").checked = S.actions; $("#opt-source").checked = S.sourceApp; $("#opt-parents").checked = S.parents;
     $$("#swatches .sw-dot").forEach(function (b) { b.setAttribute("aria-checked", String(b.getAttribute("data-v") === S.backdrop)); });
   }
