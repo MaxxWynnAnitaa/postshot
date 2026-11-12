@@ -9,6 +9,7 @@
 
   var BACKDROPS = [
     { id: "match", label: "Match the post", cfg: { type: "match" } },
+    { id: "none", label: "No background (transparent PNG)", cfg: { type: "transparent" } },
     { id: "ink", label: "Ink", cfg: { type: "solid", c1: "#0b0b0c" } },
     { id: "paper", label: "Paper", cfg: { type: "solid", c1: "#ece6da" } },
     { id: "slate", label: "Slate", cfg: { type: "solid", c1: "#2a3038" } },
@@ -18,12 +19,12 @@
 
   var S = {
     model: null, source: null, id: null, urlHandle: "", assets: {}, hadParents: false,
-    theme: "light", layout: "detail", metrics: true, views: true, showDate: true, showTime: true, actions: true, sourceApp: false, parents: false,
-    ratio: "", pad: "0", backdrop: "match", custom: "#3b3b46",
+    theme: "light", fontFamily: "iphone", postWeight: "400", frameStyle: "flat", layout: "detail", metrics: true, views: true, showDate: true, showTime: true, actions: true, sourceApp: false, parents: false,
+    ratio: "", pad: "0", backdrop: "match", framePreset: "clean", custom: "#3b3b46",
     format: "png", scale: "3", busy: false, lastBlob: null
   };
-  try { var saved = JSON.parse(localStorage.getItem("postshot.prefs") || "{}"); ["theme", "format", "scale"].forEach(function (k) { if (saved[k]) S[k] = saved[k]; }); } catch (e) {}
-  function savePrefs() { try { localStorage.setItem("postshot.prefs", JSON.stringify({ theme: S.theme, format: S.format, scale: S.scale })); } catch (e) {} }
+  try { var saved = JSON.parse(localStorage.getItem("postshot.prefs") || "{}"); ["theme", "format", "scale", "fontFamily", "postWeight"].forEach(function (k) { if (saved[k]) S[k] = saved[k]; }); } catch (e) {}
+  function savePrefs() { try { localStorage.setItem("postshot.prefs", JSON.stringify({ theme: S.theme, format: S.format, scale: S.scale, fontFamily: S.fontFamily, postWeight: S.postWeight })); } catch (e) {} }
 
   /* ---------------- small UI helpers ---------------- */
   function setState(s) { document.body.setAttribute("data-state", s); }
@@ -85,8 +86,8 @@
     var b = BACKDROPS.filter(function (x) { return x.id === S.backdrop; })[0];
     var bd = S.backdrop === "custom" ? { type: "solid", c1: S.custom } : (b ? b.cfg : { type: "match" });
     return {
-      theme: S.theme, layout: S.layout, showMetrics: S.metrics, showViews: S.views, showDate: S.showDate, showTime: S.showTime, showActions: S.actions, showSource: S.sourceApp,
-      now: Date.now(), frame: { pad: +S.pad, ratio: S.ratio ? +S.ratio : null, backdrop: bd }
+      theme: S.theme, layout: S.layout, fontFamily: S.fontFamily, postWeight: S.postWeight, showMetrics: S.metrics, showViews: S.views, showDate: S.showDate, showTime: S.showTime, showActions: S.actions, showSource: S.sourceApp,
+      now: Date.now(), frame: { pad: +S.pad, ratio: S.ratio ? +S.ratio : null, backdrop: bd, radius: S.frameStyle }
     };
   }
   function schedule() { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); }
@@ -130,13 +131,22 @@
   }
 
   function syncControls() {
-    pickTheme(S.theme); pickLayout(S.layout); pickRatio(S.ratio); pickPad(S.pad); pickFormat(S.format); pickScale(S.scale);
+    pickTheme(S.theme); pickFont(S.fontFamily); pickWeight(S.postWeight); pickFrameStyle(S.frameStyle); pickPreset(S.framePreset); pickLayout(S.layout); pickRatio(S.ratio); pickPad(S.pad); pickFont(S.fontFamily); pickWeight(S.postWeight); pickFrameStyle(S.frameStyle); pickPreset(S.framePreset); pickFormat(S.format); pickScale(S.scale);
     $("#opt-metrics").checked = S.metrics; $("#opt-views").checked = S.views; $("#opt-date").checked = S.showDate; $("#opt-time").checked = S.showTime; $("#opt-actions").checked = S.actions; $("#opt-source").checked = S.sourceApp; $("#opt-parents").checked = S.parents;
     $$("#swatches .sw-dot").forEach(function (b) { b.setAttribute("aria-checked", String(b.getAttribute("data-v") === S.backdrop)); });
   }
 
   /* ---------------- controls ---------------- */
   var pickTheme = seg("#seg-theme", S.theme, function (v) { S.theme = v; savePrefs(); pickTheme(v); schedule(); });
+  var pickFont = seg("#seg-font", S.fontFamily, function (v) { S.fontFamily = v; savePrefs(); pickFont(v); schedule(); });
+  var pickWeight = seg("#seg-weight", S.postWeight, function (v) { S.postWeight = v; savePrefs(); pickWeight(v); schedule(); });
+  var pickFrameStyle = seg("#seg-frame-style", S.frameStyle, function (v) { S.frameStyle = v; pickFrameStyle(v); schedule(); });
+  var pickPreset = seg("#seg-frame-preset", S.framePreset, function (v) {
+    S.framePreset = v;
+    var presets = { clean: ["", "0"], square: ["1", "28"], portrait: ["0.8", "24"], story: ["0.5625", "24"], wide: ["1.7778", "24"] };
+    S.ratio = presets[v][0]; S.pad = presets[v][1];
+    pickPreset(v); pickRatio(S.ratio); pickPad(S.pad); schedule();
+  });
   var pickLayout = seg("#seg-layout", S.layout, function (v) { S.layout = v; pickLayout(v); schedule(); });
   var pickRatio = seg("#seg-ratio", S.ratio, function (v) { S.ratio = v; pickRatio(v); schedule(); });
   var pickPad = seg("#seg-pad", S.pad, function (v) { S.pad = v; pickPad(v); schedule(); });
@@ -167,8 +177,8 @@
   })();
   function pickBackdrop(id) {
     S.backdrop = id;
-    $$("#swatches .sw-dot").forEach(function (b) { b.setAttribute("aria-checked", String(b.getAttribute("data-v") === id)); });
-    if (id !== "match" && S.pad === "0" && !S.ratio) { S.pad = "48"; pickPad("48"); }
+    $("#swatches .sw-dot").forEach(function (b) { b.setAttribute("aria-checked", String(b.getAttribute("data-v") === id)); });
+    if (id !== "match" && id !== "none" && S.pad === "0" && !S.ratio) { S.pad = "48"; pickPad("48"); }
     schedule();
   }
 
