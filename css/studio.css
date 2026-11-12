@@ -171,3 +171,6 @@ body[data-state="empty"] .toast{bottom:24px}
   body[data-state="studio"] .paste{max-width:none}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* Transparent background swatch */
+.sw-dot[data-v="none"]{background:repeating-conic-gradient(#38383d 0% 25%,#202024 0% 50%) 50%/12px 12px;border-style:dashed}
