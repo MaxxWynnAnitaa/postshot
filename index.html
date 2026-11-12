@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PostShot – Post screenshots</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f4f5f8;--panel:#fff;--ink:#14171a;--mute:#6b7280;--line:#e4e6eb;--brand:#6d5efc}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1013;--panel:#181b20;--ink:#eef0f3;--mute:#9aa1ad;--line:#2a2e36}}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{max-width:1100px;margin:0 auto;padding:22px 16px 8px}
+h1{margin:0;font-size:24px;letter-spacing:-.02em}h1 span{color:var(--brand)}
+.sub{color:var(--mute);margin:2px 0 14px}
+.url{display:flex;gap:8px}
+.url input{flex:1;min-width:0;padding:12px 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel);color:var(--ink);font:inherit}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:11px 16px;background:var(--brand);color:#fff;font-weight:600}
+button.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+#status{font-size:13px;color:var(--mute);min-height:20px;margin-top:6px}
+main{max-width:1100px;margin:0 auto;padding:8px 16px 40px;display:grid;gap:16px;grid-template-columns:1fr}
+@media(min-width:900px){main{grid-template-columns:1fr 360px;align-items:start}.panel{position:sticky;top:12px}}
+.stage{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px;overflow-x:auto}
+#shot{padding:40px 28px;border-radius:12px;width:100%;min-width:320px;max-width:640px;margin:0 auto}
+.tw{background:var(--card);color:var(--text);border-radius:18px;padding:18px;box-shadow:0 8px 30px rgba(0,0,0,.18);font-family:-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif}
+.hd{display:flex;gap:10px;align-items:center}
+.av{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--link));flex:none}
+.nm{font-weight:700;color:var(--name);display:flex;align-items:center;gap:4px;line-height:1.2}
+.hn{opacity:.65;font-size:14px;color:var(--link)}
+.tx{font-size:20px;line-height:1.35;margin:12px 0;white-space:pre-wrap}
+.tx a,.lk{color:var(--link)}
+.im{width:100%;aspect-ratio:16/9;border-radius:14px;display:block;margin-bottom:12px;border:1px solid rgba(128,128,128,.25)}
+.meta{opacity:.65;font-size:14px;padding:10px 0;border-top:1px solid rgba(128,128,128,.25)}
+.st{display:flex;gap:22px;padding-top:10px;border-top:1px solid rgba(128,128,128,.25);font-size:14px}
+.st b{color:var(--accent)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px}
+.panel h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--mute);margin:14px 0 8px}
+.panel h2:first-child{margin-top:0}
+.themes{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.th{height:44px;border-radius:10px;border:2px solid transparent;padding:0;position:relative}
+.th.on{border-color:var(--brand)}
+.th small{position:absolute;bottom:-17px;left:0;right:0;text-align:center;font-size:10px;color:var(--mute);font-weight:400}
+.themes{margin-bottom:22px}
+.row{display:grid;grid-template-columns:1fr 44px 86px 112px;gap:6px;align-items:center;margin:6px 0}
+.row input[type=color]{width:44px;height:38px;padding:2px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.row input[type=text]{width:100%;min-width:0;padding:8px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font:13px ui-monospace,monospace}
+@media(max-width:480px){.row{grid-template-columns:1fr 44px 78px}.row .rgb{grid-column:2/4}}
+.seg{display:flex;gap:6px;margin:6px 0}.seg button{flex:1;padding:8px}
+.seg button:not(.on){background:transparent;color:var(--ink);border:1px solid var(--line)}
+input[type=range]{width:100%}
+label.c{display:flex;gap:8px;align-items:center;margin:4px 0}
+.save{display:flex;gap:6px}.save input{flex:1;min-width:0;padding:9px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);font:inherit}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:20px;padding:4px 6px 4px 4px;background:transparent;color:var(--ink);font-weight:500}
+.chip i{width:22px;height:22px;border-radius:50%;display:block}.chip u{text-decoration:none;opacity:.5;padding:0 4px}
+.dl{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+.dl select{padding:10px;border-radius:12px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font:inherit}
+#out{margin-top:12px;display:none}#out img{width:100%;border-radius:10px;border:1px solid var(--line)}
+</style></head>
+<body>
+<header>
+ <h1>Post<span>Shot</span></h1>
+ <p class="sub">Paste a public X post link, style it your way, download it as an image.</p>
+ <div class="url"><input id="u" placeholder="https://x.com/username/status/123456789" aria-label="Post URL"><button id="go">Get post</button></div>
+ <div id="status"></div>
+</header>
+<main>
+ <section class="stage"><div id="shot"><div class="tw">
+  <div class="hd"><div class="av" id="av"></div><div><div class="nm"><span id="dn">Rita Demo</span> <svg width="17" height="17" viewBox="0 0 24 24"><path fill="var(--accent)" d="M12 1l3 2 3.5-.3 1.2 3.3 3 1.8-1 3.4 1 3.4-3 1.8-1.2 3.3L15 21l-3 2-3-2-3.5.3-1.2-3.3-3-1.8 1-3.4-1-3.4 3-1.8L5.5 2.7 9 3z"/><path d="M8 12l3 3 5-6" stroke="#fff" stroke-width="2.2" fill="none"/></svg></div><div class="hn" id="hd">@ritademo</div></div></div>
+  <div class="tx" id="tx">Design your screenshot your way. Any colour, any gradient, one click to download. <a class="lk">#PostShot</a> <span class="lk">postshot.app</span></div>
+  <img class="im" id="im" alt="">
+  <div class="meta"><span id="mt">10:42 AM · 12 Nov 2026</span></div>
+  <div class="st" id="st"><span><b id="s1">128</b> Replies</span><span><b id="s2">2.1K</b> Reposts</span><span><b id="s3">9.8K</b> Likes</span></div>
+ </div></div></section>
+
+ <aside class="panel">
+  <h2>Themes</h2><div class="themes" id="themes"></div>
+  <h2>Backdrop</h2>
+  <div class="seg" id="mode"><button data-m="solid">Solid</button><button data-m="grad">Gradient</button></div>
+  <div id="r-bg"></div>
+  <div id="angw"><label for="ang" style="font-size:13px;color:var(--mute)">Gradient angle: <span id="angv"></span>°</label><input type="range" id="ang" min="0" max="360"></div>
+  <h2>Post colours</h2><div id="r-post"></div>
+  <h2>Show</h2>
+  <label class="c"><input type="checkbox" id="showIm" checked> Image</label>
+  <label class="c"><input type="checkbox" id="showSt" checked> Stats</label>
+  <h2>Save this look</h2>
+  <div class="save"><input id="sn" placeholder="Name your colours" maxlength="24"><button id="sv">Save</button></div>
+  <div class="chips" id="chips"></div>
+  <h2>Download</h2>
+  <div class="dl"><select id="fmt"><option value="png">PNG</option><option value="jpeg">JPG</option></select><select id="sc"><option value="2">2× sharp</option><option value="3" selected>3× HD</option><option value="4">4× ultra</option></select></div>
+  <button id="dl" style="width:100%;margin-top:8px">Download image</button>
+  <div id="out"><p style="font-size:13px;color:var(--mute);margin:0 0 6px">Ready. If it didn’t download, press and hold the image to save it.</p><img id="oi" alt="Your screenshot"></div>
+ </aside>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script>
+const $=s=>document.querySelector(s);
+const T={
+ "Classic":{mode:"solid",bg1:"#e8edf2",bg2:"#cfd8e3",angle:135,card:"#ffffff",text:"#0f1419",name:"#0f1419",link:"#1d9bf0",accent:"#1d9bf0"},
+ "Dim":{mode:"solid",bg1:"#15202b",bg2:"#0d141b",angle:135,card:"#192734",text:"#e7e9ea",name:"#ffffff",link:"#4db3ff",accent:"#1d9bf0"},
+ "Lights out":{mode:"solid",bg1:"#000000",bg2:"#111111",angle:135,card:"#000000",text:"#e7e9ea",name:"#ffffff",link:"#1d9bf0",accent:"#1d9bf0"},
+ "Sunset":{mode:"grad",bg1:"#ff7e5f",bg2:"#feb47b",angle:135,card:"#fff7f2",text:"#3b1f14",name:"#7a2e12",link:"#e0482a",accent:"#ff7e5f"},
+ "Ocean":{mode:"grad",bg1:"#2193b0",bg2:"#6dd5ed",angle:160,card:"#f2fbfe",text:"#0b3a4a",name:"#06303d",link:"#0a7fa5",accent:"#2193b0"},
+ "Aurora":{mode:"grad",bg1:"#7f00ff",bg2:"#e100ff",angle:135,card:"#1b1030",text:"#f3e8ff",name:"#ffffff",link:"#e0a3ff",accent:"#c77dff"},
+ "Forest":{mode:"grad",bg1:"#134e5e",bg2:"#71b280",angle:120,card:"#f1f8f2",text:"#16301f",name:"#0e2616",link:"#2f7d4a",accent:"#3a9a5b"},
+ "Candy":{mode:"grad",bg1:"#f093fb",bg2:"#f5576c",angle:45,card:"#ffffff",text:"#3a1230",name:"#3a1230",link:"#d6336c",accent:"#f5576c"}
+};
+let S={...T.Classic};
+const ROWS={bg1:"Colour 1",bg2:"Colour 2",card:"Card",text:"Text",name:"Display name",link:"Handle & links",accent:"Accent & icons"};
+const hex2rgb=h=>{h=h.replace("#","");return [0,2,4].map(i=>parseInt(h.substr(i,2),16))};
+const rgb2hex=a=>"#"+a.map(n=>Math.max(0,Math.min(255,n|0)).toString(16).padStart(2,"0")).join("");
+function mkRow(k,box){
+ const r=document.createElement("div");r.className="row";r.dataset.k=k;
+ r.innerHTML=`<span>${ROWS[k]}</span><input type="color" aria-label="${ROWS[k]} colour"><input type="text" class="hex" maxlength="7" aria-label="HEX"><input type="text" class="rgb" aria-label="RGB">`;
+ const [c,h,g]=r.querySelectorAll("input");
+ c.oninput=()=>set(k,c.value);
+ h.oninput=()=>{const v=h.value.trim();if(/^#?[0-9a-f]{6}$/i.test(v))set(k,"#"+v.replace("#","").toLowerCase())};
+ g.oninput=()=>{const m=g.value.match(/\d+/g);if(m&&m.length>=3&&m.slice(0,3).every(n=>+n<=255))set(k,rgb2hex(m.slice(0,3).map(Number)))};
+ $(box).appendChild(r);
+}
+["bg1","bg2"].forEach(k=>mkRow(k,"#r-bg"));["card","text","name","link","accent"].forEach(k=>mkRow(k,"#r-post"));
+function set(k,v){S[k]=v;render()}
+function render(){
+ const sh=$("#shot");
+ sh.style.background=S.mode==="grad"?`linear-gradient(${S.angle}deg,${S.bg1},${S.bg2})`:S.bg1;
+ ["card","text","name","link","accent"].forEach(k=>sh.style.setProperty("--"+k,S[k]));
+ document.querySelectorAll(".row").forEach(r=>{
+  const k=r.dataset.k,v=S[k],[c,h,g]=r.querySelectorAll("input");
+  c.value=v;if(document.activeElement!==h)h.value=v;
+  if(document.activeElement!==g)g.value=hex2rgb(v).join(", ");
+  if(k==="bg2")r.style.display=S.mode==="grad"?"":"none";
+  if(k==="bg1")r.firstChild.textContent=S.mode==="grad"?"Colour 1":"Backdrop";
+ });
+ $("#angw").style.display=S.mode==="grad"?"":"none";
+ $("#ang").value=S.angle;$("#angv").textContent=S.angle;
+ document.querySelectorAll("#mode button").forEach(b=>b.classList.toggle("on",b.dataset.m===S.mode));
+ $("#im").style.display=$("#showIm").checked?"":"none";
+ $("#st").style.display=$("#showSt").checked?"":"none";
+ $("#im").src=realImg||"data:image/svg+xml,"+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${S.accent}"/><stop offset="1" stop-color="${S.link}"/></linearGradient></defs><rect width="640" height="360" fill="url(#g)"/><circle cx="470" cy="110" r="60" fill="#fff" opacity=".35"/><path d="M0 360L190 170l110 110 90-70 250 150z" fill="#000" opacity=".25"/></svg>`);
+ document.querySelectorAll(".th").forEach(b=>b.classList.toggle("on",JSON.stringify(T[b.dataset.t])===JSON.stringify(S)));
+}
+$("#mode").onclick=e=>{if(e.target.dataset.m)set("mode",e.target.dataset.m)};
+$("#ang").oninput=e=>set("angle",+e.target.value);
+$("#showIm").onchange=$("#showSt").onchange=render;
+const bgOf=t=>t.mode==="grad"?`linear-gradient(${t.angle}deg,${t.bg1},${t.bg2})`:t.bg1;
+Object.keys(T).forEach(n=>{const b=document.createElement("button");b.className="th";b.dataset.t=n;b.style.background=bgOf(T[n]);b.innerHTML=`<small>${n}</small>`;b.onclick=()=>{S={...T[n]};render()};$("#themes").appendChild(b)});
+// saved looks
+let saved=[];try{saved=JSON.parse(localStorage.getItem("ps_saved")||"[]")}catch(e){}
+function persist(){try{localStorage.setItem("ps_saved",JSON.stringify(saved))}catch(e){}}
+function chips(){const box=$("#chips");box.innerHTML="";saved.forEach((s,i)=>{const c=document.createElement("button");c.className="chip";c.innerHTML=`<i style="background:${bgOf(s.v)}"></i>${s.n.replace(/</g,"&lt;")}<u title="Delete">✕</u>`;c.onclick=ev=>{if(ev.target.tagName==="U"){saved.splice(i,1);persist();chips()}else{S={...s.v};render()}};box.appendChild(c)})}
+$("#sv").onclick=()=>{const n=$("#sn").value.trim()||"My look "+(saved.length+1);saved.push({n,v:{...S}});persist();chips();$("#sn").value=""};
+// url + download
+let realImg=null;
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const linkify=s=>esc(s).replace(/(https?:\/\/\S+|#\w+|@\w+)/g,'<a class="lk">$1</a>');
+const num=n=>n==null?"—":new Intl.NumberFormat("en",{notation:"compact"}).format(n);
+function applyPost(d){
+ $("#dn").textContent=d.name;$("#hd").textContent="@"+d.handle;$("#tx").innerHTML=linkify(d.text);
+ const av=$("#av");if(d.avatar){av.style.backgroundImage="url("+d.avatar+")";av.style.backgroundSize="cover"}
+ realImg=d.image;$("#showIm").checked=!!d.image;
+ $("#s1").textContent=num(d.replies);$("#s2").textContent=num(d.reposts);$("#s3").textContent=num(d.likes);
+ $("#mt").textContent=new Date(d.date).toLocaleString("en-ZA",{hour:"numeric",minute:"2-digit",day:"numeric",month:"short",year:"numeric"});
+ render();
+}
+$("#go").onclick=async()=>{
+ const m=$("#u").value.match(/(?:x|twitter)\.com\/(\w+)\/status\/(\d+)/i),st=$("#status");
+ if(!m){st.textContent="That doesn’t look like an X post link. Try: https://x.com/username/status/123…";return}
+ st.textContent="Fetching post…";
+ try{const r=await fetch("/api/tweet?id="+m[2]),d=await r.json();if(!r.ok)throw new Error(d.error||"failed");
+  applyPost(d);st.textContent="Loaded post by @"+d.handle+"."}
+ catch(e){st.textContent="Couldn’t load that post ("+e.message+"). It may be private, deleted, or unavailable."}};
+$("#dl").onclick=async()=>{const b=$("#dl");b.textContent="Rendering…";
+ try{const f=$("#fmt").value,cv=await html2canvas($("#shot"),{scale:+$("#sc").value,useCORS:true,backgroundColor:null});
+  const url=cv.toDataURL("image/"+f,.95);$("#oi").src=url;$("#out").style.display="block";
+  const a=document.createElement("a");a.href=url;a.download="postshot."+(f==="jpeg"?"jpg":"png");a.click();
+ }catch(e){$("#status").textContent="Couldn’t render the image: "+e.message}
+ b.textContent="Download image"};
+chips();render();
+</script></body></html>
