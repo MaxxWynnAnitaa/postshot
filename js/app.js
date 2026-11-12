@@ -18,7 +18,7 @@
 
   var S = {
     model: null, source: null, id: null, urlHandle: "", assets: {}, hadParents: false,
-    theme: "light", layout: "detail", metrics: true, views: true, actions: true, sourceApp: false, parents: false,
+    theme: "light", layout: "detail", metrics: true, views: true, showDate: true, showTime: true, actions: true, sourceApp: false, parents: false,
     ratio: "", pad: "0", backdrop: "match", custom: "#3b3b46",
     format: "png", scale: "3", busy: false, lastBlob: null
   };
@@ -85,7 +85,7 @@
     var b = BACKDROPS.filter(function (x) { return x.id === S.backdrop; })[0];
     var bd = S.backdrop === "custom" ? { type: "solid", c1: S.custom } : (b ? b.cfg : { type: "match" });
     return {
-      theme: S.theme, layout: S.layout, showMetrics: S.metrics, showViews: S.views, showActions: S.actions, showSource: S.sourceApp,
+      theme: S.theme, layout: S.layout, showMetrics: S.metrics, showViews: S.views, showDate: S.showDate, showTime: S.showTime, showActions: S.actions, showSource: S.sourceApp,
       now: Date.now(), frame: { pad: +S.pad, ratio: S.ratio ? +S.ratio : null, backdrop: bd }
     };
   }
@@ -131,7 +131,7 @@
 
   function syncControls() {
     pickTheme(S.theme); pickLayout(S.layout); pickRatio(S.ratio); pickPad(S.pad); pickFormat(S.format); pickScale(S.scale);
-    $("#opt-metrics").checked = S.metrics; $("#opt-views").checked = S.views; $("#opt-actions").checked = S.actions; $("#opt-source").checked = S.sourceApp; $("#opt-parents").checked = S.parents;
+    $("#opt-metrics").checked = S.metrics; $("#opt-views").checked = S.views; $("#opt-date").checked = S.showDate; $("#opt-time").checked = S.showTime; $("#opt-actions").checked = S.actions; $("#opt-source").checked = S.sourceApp; $("#opt-parents").checked = S.parents;
     $$("#swatches .sw-dot").forEach(function (b) { b.setAttribute("aria-checked", String(b.getAttribute("data-v") === S.backdrop)); });
   }
 
@@ -142,7 +142,7 @@
   var pickPad = seg("#seg-pad", S.pad, function (v) { S.pad = v; pickPad(v); schedule(); });
   var pickFormat = seg("#seg-format", S.format, function (v) { S.format = v; savePrefs(); pickFormat(v); schedule(); });
   var pickScale = seg("#seg-scale", S.scale, function (v) { S.scale = v; savePrefs(); pickScale(v); schedule(); });
-  [["#opt-metrics", "metrics"], ["#opt-views", "views"], ["#opt-actions", "actions"], ["#opt-source", "sourceApp"]].forEach(function (p) {
+  [["#opt-metrics", "metrics"], ["#opt-views", "views"], ["#opt-date", "showDate"], ["#opt-time", "showTime"], ["#opt-actions", "actions"], ["#opt-source", "sourceApp"]].forEach(function (p) {
     $(p[0]).addEventListener("change", function (e) { S[p[1]] = e.target.checked; schedule(); });
   });
   $("#opt-parents").addEventListener("change", function (e) { S.parents = e.target.checked; load({ id: S.id, handle: S.urlHandle, parents: S.parents, keepRepost: true, quiet: true }); });
