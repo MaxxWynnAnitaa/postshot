@@ -278,12 +278,12 @@
     if (n < 1e6) { v = n / 1e3; return (v < 100 ? Math.floor(v * 10) / 10 : Math.floor(v)) + "K"; }
     v = n / 1e6; return (v < 100 ? Math.floor(v * 10) / 10 : Math.floor(v)) + "M";
   }
-  function fmtDetailDate(iso, tz) {
+  function fmtDetailDate(iso, tz, showTime, showDate) {
     var d = new Date(iso); if (isNaN(d)) return "";
-    var o = tz ? { timeZone: tz } : {};
-    var t = new Intl.DateTimeFormat("en-US", Object.assign({ hour: "numeric", minute: "2-digit" }, o)).format(d).replace(/\u202f/g, " ");
-    var dt = new Intl.DateTimeFormat("en-US", Object.assign({ month: "short", day: "numeric", year: "numeric" }, o)).format(d);
-    return t + " \u00b7 " + dt;
+    var o = tz ? { timeZone: tz } : {}, parts = [];
+    if (showTime) parts.push(new Intl.DateTimeFormat("en-US", Object.assign({ hour: "numeric", minute: "2-digit" }, o)).format(d).replace(/\u202f/g, " "));
+    if (showDate) parts.push(new Intl.DateTimeFormat("en-US", Object.assign({ month: "short", day: "numeric", year: "numeric" }, o)).format(d));
+    return parts.join(" · ");
   }
   function fmtShortAge(iso, now, tz) {
     var d = new Date(iso); if (isNaN(d)) return "";
@@ -462,10 +462,10 @@
     if (p.media && p.media.length) { y += this.media(p.media, px, y, cw, 16, true) + 12; }
     if (p.quote) { y += this.quote(p.quote, px, y, cw, o) + 12; }
     // time and views
-    var date = fmtDetailDate(p.createdAt, o.timeZone);
-    var views = o.showViews !== false && o.showMetrics !== false ? fmtCount(p.metrics && p.metrics.views) : "";
+    var date = fmtDetailDate(p.createdAt, o.timeZone, o.showTime !== false, o.showDate !== false);
+    var views = o.showViews !== false ? fmtCount(p.metrics && p.metrics.views) : "";
     var src = o.showSource && p.source ? p.source : "";
-    if (date) {
+    if (date || views || src) {
       y += 2;
       if (this.draw) {
         var base = y + 10 + 5.25, x = px;
@@ -529,7 +529,7 @@
     }
     var top = y;
     // name row
-    var age = p.createdAt ? fmtShortAge(p.createdAt, o.now, o.timeZone) : "";
+    var age = p.createdAt && (o.showDate !== false || o.showTime !== false) ? fmtShortAge(p.createdAt, o.now, o.timeZone) : "";
     var timeStr = age ? " \u00b7 " + age : "";
     var timeW = this.measure(timeStr, 15, 400);
     var bw = p.author.verified ? 20 : 0, avail = cw - 24 - timeW;
