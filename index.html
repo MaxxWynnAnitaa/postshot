@@ -74,6 +74,24 @@
       </details>
 
       <details open>
+        <summary>Typography</summary>
+        <p class="cap">Font family</p>
+        <div class="seg wrap" id="seg-font" role="radiogroup" aria-label="Font family">
+          <button type="button" role="radio" data-v="iphone">iPhone / SF</button>
+          <button type="button" role="radio" data-v="roboto">Roboto</button>
+          <button type="button" role="radio" data-v="segoe">Segoe UI</button>
+          <button type="button" role="radio" data-v="inter">Inter</button>
+        </div>
+        <p class="cap">Post text weight</p>
+        <div class="seg" id="seg-weight" role="radiogroup" aria-label="Post text weight">
+          <button type="button" role="radio" data-v="400">Regular</button>
+          <button type="button" role="radio" data-v="500">Medium</button>
+          <button type="button" role="radio" data-v="700">Bold</button>
+        </div>
+        <p class="hint">iPhone / SF uses the device system font where available. Author names keep X-style emphasis.</p>
+      </details>
+
+      <details open>
         <summary>Details</summary>
         <label class="row"><span>Engagement numbers</span><input type="checkbox" id="opt-metrics" checked><i class="sw"></i></label>
         <label class="row"><span>Post date</span><input type="checkbox" id="opt-date" checked><i class="sw"></i></label>
@@ -97,7 +115,20 @@
 
       <details>
         <summary>Size &amp; backdrop</summary>
-        <p class="cap">Shape</p>
+        <p class="cap">Frame preset</p>
+        <div class="seg wrap" id="seg-frame-preset" role="radiogroup" aria-label="Frame preset">
+          <button type="button" role="radio" data-v="clean">No frame</button>
+          <button type="button" role="radio" data-v="square">Square</button>
+          <button type="button" role="radio" data-v="portrait">Portrait</button>
+          <button type="button" role="radio" data-v="story">Story</button>
+          <button type="button" role="radio" data-v="wide">Wide</button>
+        </div>
+        <p class="cap">Post edge</p>
+        <div class="seg" id="seg-frame-style" role="radiogroup" aria-label="Post edge">
+          <button type="button" role="radio" data-v="flat">Straight</button>
+          <button type="button" role="radio" data-v="rounded">Rounded</button>
+        </div>
+        <p class="cap">Shape (custom)</p>
         <div class="seg wrap" id="seg-ratio" role="radiogroup" aria-label="Shape">
           <button type="button" role="radio" data-v="">Natural</button>
           <button type="button" role="radio" data-v="1">1:1</button>
@@ -112,9 +143,9 @@
           <button type="button" role="radio" data-v="48">Medium</button>
           <button type="button" role="radio" data-v="80">Large</button>
         </div>
-        <p class="cap">Backdrop</p>
+        <p class="cap">Background</p>
         <div class="swatches" id="swatches" role="radiogroup" aria-label="Backdrop"></div>
-        <p class="hint">The post is never resized or cropped. Padding and shape only add space around it.</p>
+        <p class="hint">No frame gives you the post at its natural size. Choose a frame preset when you want extra space around it. The No background swatch gives transparent space in PNG exports.</p>
       </details>
 
       <details open>
