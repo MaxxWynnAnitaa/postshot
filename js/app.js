@@ -131,8 +131,8 @@
   }
 
   function syncControls() {
-    pickTheme(S.theme); pickFont(S.fontFamily); pickWeight(S.postWeight); pickFrameStyle(S.frameStyle); pickPreset(S.framePreset); pickLayout(S.layout); pickRatio(S.ratio); pickPad(S.pad); pickFormat(S.format); pickScale(S.scale);
-    $("#opt-metrics").checked = S.metrics; $("#opt-views").checked = S.views; $("#opt-date").checked = S.showDate; $("#opt-time").checked = S.showTime; $("#opt-actions").checked = S.actions; $("#opt-source").checked = S.sourceApp; $("#opt-parents").checked = S.parents;
+    pickTheme(S.theme); pickFont(S.fontFamily); pickWeight(S.postWeight); pickFrameStyle(S.frameStyle); pickPreset(S.framePreset); pickLayout(S.layout); pickRatio(S.ratio); pickPad(S.pad); pickFormat(S.format); pickScale(S.scale); pickReplyContext(S.parents ? "with-parent" : "reply-only");
+    $("#opt-metrics").checked = S.metrics; $("#opt-views").checked = S.views; $("#opt-date").checked = S.showDate; $("#opt-time").checked = S.showTime; $("#opt-actions").checked = S.actions; $("#opt-source").checked = S.sourceApp;
     $$("#swatches .sw-dot").forEach(function (b) { b.setAttribute("aria-checked", String(b.getAttribute("data-v") === S.backdrop)); });
   }
 
@@ -155,7 +155,7 @@
   [["#opt-metrics", "metrics"], ["#opt-views", "views"], ["#opt-date", "showDate"], ["#opt-time", "showTime"], ["#opt-actions", "actions"], ["#opt-source", "sourceApp"]].forEach(function (p) {
     $(p[0]).addEventListener("change", function (e) { S[p[1]] = e.target.checked; schedule(); });
   });
-  $("#opt-parents").addEventListener("change", function (e) { S.parents = e.target.checked; load({ id: S.id, handle: S.urlHandle, parents: S.parents, keepRepost: true, quiet: true }); });
+  var pickReplyContext = seg("#seg-reply-context", S.parents ? "with-parent" : "reply-only", function (v) { S.parents = v === "with-parent"; pickReplyContext(v); load({ id: S.id, handle: S.urlHandle, parents: S.parents, keepRepost: true, quiet: true }); });
 
   (function buildSwatches() {
     var box = $("#swatches");
@@ -215,7 +215,7 @@
       .then(function (x) {
         if (!x.ok) throw new Error(x.j.error || "Couldn’t find that account.");
         S.model.repostBy = { name: x.j.profile.name, handle: x.j.profile.handle, detected: "user" };
-        S.model.thread = []; S.parents = false; $("#opt-parents").checked = false;
+        S.model.thread = []; S.parents = false; pickReplyContext("reply-only");
         $("#reposter").value = ""; renderRepostPanel(); renderNotices(); prepareAndDraw(); toast("Repost line added");
       }).catch(function (err) { toast(err.message); }).then(function () { btn.disabled = false; });
   }
@@ -246,7 +246,7 @@
     var p = $("#pill"); p.textContent = pillText; p.className = "pill" + (sample ? " sample" : "");
     var parents = !!(S.model.parentAvailable) && S.source !== "sample";
     $("#row-parents").hidden = !parents; $("#row-source").hidden = false;
-    $("#opt-parents").checked = S.parents;
+    pickReplyContext(S.parents ? "with-parent" : "reply-only");
     syncControls(); renderRepostPanel(); renderNotices();
   }
   function pillFor() {
@@ -285,7 +285,7 @@
         $("#canvas-wrap").classList.remove("busy");
         var msg = err && err.message === "Failed to fetch" ? "You appear to be offline. Check your connection and try again." : (err && err.message) || "Something went wrong.";
         if (inStudio) toast(msg); else showError(msg);
-        if (inStudio) { $("#opt-parents").checked = S.parents = false; }
+        if (inStudio) { S.parents = false; pickReplyContext("reply-only"); }
       }).then(function () { S.busy = false; loading(goBtn, false); });
   }
 
