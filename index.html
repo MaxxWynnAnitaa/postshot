@@ -99,7 +99,7 @@
         <label class="row"><span>View count</span><input type="checkbox" id="opt-views" checked><i class="sw"></i></label>
         <label class="row"><span>Action icons</span><input type="checkbox" id="opt-actions" checked><i class="sw"></i></label>
         <label class="row" id="row-source"><span>Posted-from app</span><input type="checkbox" id="opt-source"><i class="sw"></i></label>
-        <label class="row" id="row-parents" hidden><span>Include the post it replies to</span><input type="checkbox" id="opt-parents"><i class="sw"></i></label>
+        <div class="reply-context" id="row-parents" hidden><p class="cap">Reply display</p><div class="seg" id="seg-reply-context" role="radiogroup" aria-label="Reply display"><button type="button" role="radio" data-v="reply-only">Reply only</button><button type="button" role="radio" data-v="with-parent">Original + reply</button></div><p class="hint">Choose whether to show just this reply or include the original post above it.</p></div>
       </details>
 
       <details id="box-repost">
